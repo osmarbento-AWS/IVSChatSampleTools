@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Amazon IVS Chat Creation Standalone API
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Timeout: 40
+    MemorySize: 128
+    Environment:
+      Variables:
+        ACCOUNT_ID:
+          Ref: AWS::AccountId
+Resources:
+  AmazonIVSChatCreation:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: s3://sam-deploy-clip/10698380df6b96ba164afc3908d49c2a
+      Policies:
+      - Statement:
+        - Sid: IVSChatToken
+          Effect: Allow
+          Action:
+          - ivschat:CreateRoom
+          Resource: '*'
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /newchat
+            Method: POST
+    Metadata:
+      SamResourceId: AmazonIVSChatCreation
+Outputs:
+  CreateRoomEndPoint:
+    Description: API endpoint
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/newchat/
